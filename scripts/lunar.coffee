@@ -50,6 +50,19 @@ module.exports = (robot) ->
     output.stdout.on 'data', (data) ->
       msg.reply data.toString().replace(/\n/g, " ")
 
+  robot.hear /^!paste$/, (msg) ->
+    msg.reply "http://devnull.lunar-linux.org"
+
+  robot.respond /update your self/i, (msg) ->
+    console.log(process.cwd())
+    output = spawn "/usr/bin/git", ['pull', '-q', 'origin', 'master']
+    output.stderr.on 'data', (data) ->
+      msg.reply "Update failed: " + data.toString().replace(/\n/g, " ")
+      return
+    output.on 'close', (code) ->
+      if code == 0
+        msg.emote "obeys his master (update OK)"
+
   # Paste related functions
   robot.router.get "/paste/notify", (req, res) ->
     if api_key? and channel?
