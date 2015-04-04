@@ -17,7 +17,7 @@
 # Author:
 #   Stefan Wold <ratler@lunar-linux.org>
 
-spawn = require 'child_process'
+{spawn} = require 'child_process'
 qs = require 'querystring'
 
 api_key = process.env.HUBOT_PASTE_API_KEY
