@@ -10,6 +10,7 @@ crypto = require 'crypto'
 
 events = ['push', 'issues', 'pull_request', 'status']
 SHARED_SECRET = process.env.HUBOT_GITHUB_SHARED_SECRET
+GOOGL_KEY = process.env.HUBOT_GOOGL_KEY
 
 
 class Github
@@ -79,31 +80,45 @@ pullRequestState = (robot, github, data) ->
         for c in commits
           github.del "#{repo}:#{c}"
 
-notifyCiStatus = (github, data, callback) ->
+shortenUrl = (robot, url, callback) ->
+  if GOOGL_KEY?
+    data = JSON.stringify longUrl: url
+    params = {}
+    params.key = GOOGL_KEY
+    robot.http('https://www.googleapis.com/urlshortener/v1/url')
+      .query(params)
+      .header("Content-Type", "application/json")
+      .post(data) (err, res, body) ->
+        callback if err then url else JSON.parse(body).id
+  else
+    console.log("To enable URL shortening set HUBOT_GOOGL_KEY.")
+    callback url
+
+notifyCiStatus = (robot, github, data, callback) ->
   repo = data.repository.name
   commit = data.commit.sha
   url = data.repository.html_url
   target = data.target_url.split "/"
-  target_url = data.target_url + 'consoleText'
-  pr = github.get "#{repo}:#{commit}"
-  msg = "#{repo} build ##{target[6]}:"
+  shortenUrl robot, data.target_url + 'consoleText', (shortTargetUrl) ->
+    pr = github.get "#{repo}:#{commit}"
+    msg = "#{repo} build ##{target[6]}:"
 
-  if data.state == 'success'
-    msg += " SUCCESS: #{target_url}"
+    if data.state == 'success'
+      msg += " SUCCESS: #{shortTargetUrl}"
+    else if data.state == 'failure'
+      msg += " FAILED: #{shortTargetUrl}"
+
     if pr
-      pull_url = "#{url}/pull/#{pr}"
-      msg += " [ PR: #{pull_url} ]"
-  else if data.state == 'failure'
-    msg += " FAILED: #{target_url}"
-    if pr
-      pull_url = "#{url}/pull/#{pr}"
-      msg += " [ PR: #{pull_url} ]"
-  callback msg
+      shortenUrl robot, "#{url}/pull/#{pr}", (shortGitUrl) ->
+        msg += " [ PR: #{shortGitUrl} ]"
+        callback msg
+    else
+      callback msg
 
 module.exports = (robot) ->
   github = new Github robot
 
-  robot.hear /gh add (\w+) (.*)/, (msg) ->
+  robot.hear /gh add (.+) (.+)/, (msg) ->
     github.add msg.match[1], msg.match[2]
     msg.reply "OK, added #{msg.match[1]}"
 
@@ -116,6 +131,10 @@ module.exports = (robot) ->
 
   robot.hear /gh list/, (msg) ->
     msg.reply "Available keys: " + github.list().join(", ")
+
+  robot.hear /googl ((https?|ftp):\/\/[^\s\/$.?#].[^\s]*)/, (msg) ->
+    shortenUrl robot, msg.match[1], (shortUrl) ->
+      msg.reply shortUrl
 
   # Event listener for github
   robot.router.post '/github/api/:room', (req, res) ->
@@ -147,7 +166,7 @@ module.exports = (robot) ->
                 robot.messageRoom room, msg
             when 'status'
               if data.state == 'success' or data.state == 'failure'
-                notifyCiStatus github, data, (msg) ->
+                notifyCiStatus robot, github, data, (msg) ->
                   robot.messageRoom room, msg
         catch error
           robot.messageRoom room, "Crap something went wrong: #{error}"
