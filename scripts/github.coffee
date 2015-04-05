@@ -92,12 +92,12 @@ notifyCiStatus = (github, data, callback) ->
     msg += " SUCCESS: #{target_url}"
     if pr
       pull_url = "#{url}/pull/#{pr}"
-      msg += "(PR: #{pull_url})"
+      msg += " [ PR: #{pull_url} ]"
   else if data.state == 'failure'
     msg += " FAILED: #{target_url}"
     if pr
       pull_url = "#{url}/pull/#{pr}"
-      msg += " (PR: #{pull_url}"
+      msg += " [ PR: #{pull_url} ]"
   callback msg
 
 module.exports = (robot) ->
@@ -146,8 +146,9 @@ module.exports = (robot) ->
               notifyPullRequest data, (msg) ->
                 robot.messageRoom room, msg
             when 'status'
-              notifyCiStatus github, data, (msg) ->
-                robot.messageRoom room, msg
+              if data.state == 'success' or data.state == 'failure'
+                notifyCiStatus github, data, (msg) ->
+                  robot.messageRoom room, msg
         catch error
           robot.messageRoom room, "Crap something went wrong: #{error}"
     else
