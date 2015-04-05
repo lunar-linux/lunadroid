@@ -110,7 +110,7 @@ notifyCiStatus = (robot, github, data, callback) ->
 
     if pr
       shortenUrl robot, "#{url}/pull/#{pr}", (shortGitUrl) ->
-        msg += " [ PR: #{shortGitUrl} ]"
+        msg += " [ PR ##{pr}: #{shortGitUrl} ]"
         callback msg
     else
       callback msg
