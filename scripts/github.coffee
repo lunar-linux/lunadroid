@@ -107,6 +107,10 @@ module.exports = (robot) ->
     github.add msg.match[1], msg.match[2]
     msg.reply "OK, added #{msg.match[1]}"
 
+  robot.hear /gh del (\w+)/, (msg) ->
+    github.del msg.match[1]
+    msg.reply "OK, removed #{msg.match[1]}"
+
   robot.hear /gh get (\w+)/, (msg) ->
     msg.reply github.get msg.match[1]
 
@@ -115,7 +119,7 @@ module.exports = (robot) ->
 
   # Event listener for github
   robot.router.post '/github/api/:room', (req, res) ->
-    if not SHARED_SECRETS?
+    if not SHARED_SECRET?
       console.log("Please set env HUBOT_GITHUB_SHARED_SECRET")
       res.end ""
       return
