@@ -18,12 +18,12 @@ class Github
       @cache = @robot.brain.data.ghdata ||= {}
 
   add: (key, val) ->
-    unless @cache[key]
+    unless @cache[key]?
       @cache[key] = val
       @robot.brain.data.ghdata = @cache
 
   del: (key) ->
-    if @cache[key]
+    if @cache[key]?
       delete @cache[key]
       @robot.brain.data.ghdata = @cache
 
