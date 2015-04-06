@@ -25,10 +25,7 @@ amqplib = require 'amqp'
 api_key = process.env.HUBOT_PASTE_API_KEY
 channel = process.env.HUBOT_PASTE_CHANNEL
 lvu_pattern = 'what|where|website|sources|maintainer|version'
-amqp_url = "amqp://" + process.env.HUBOT_RMQ_USER
-amqp_url += ":" + process.env.HUBOT_RMQ_PASS
-amqp_url += "@" + process.env.HUBOT_RMQ_HOST
-amqp_url += "/" + process.env.HUBOT_RMQ_VHOST
+amqp_url = process.env.HUBOT_RMQ_URL
 
 responses = [
   "Your wish is my command master!",
