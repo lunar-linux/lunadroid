@@ -103,18 +103,18 @@ module.exports = (robot) ->
         msg.emote "obeys his master (update OK)"
 
   # Paste related functions
-  robot.router.get "/paste/notify", (req, res) ->
+  robot.router.post "/paste/notify", (req, res) ->
     if api_key? and channel?
-      query = qs.parse(req._parsedUrl.query)
+      body = req.body
 
-      if api_key == query.apikey and query.url?
+      if api_key == body.apikey and body.url?
         name = 'Anonymous'
-        if query.name?
-          name = query.name
+        if body.name?
+          name = body.name
 
         envelope = {}
         envelope.room = channel
-        robot.send envelope, "#{name} has pasted something at #{query.url}"
+        robot.send envelope, "#{name} has pasted something at #{body.url}"
     else
       console.log "Paste API key or channel not set."
     res.end "OK"
