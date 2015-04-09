@@ -50,8 +50,15 @@ compareTimeEqual = (a, b) ->
   return result == 0
 
 notifyPullRequest = (data, callback) ->
-  if data.action == 'opened'
-    callback "[#{data.repository.name}] New pull request '#{data.pull_request.title}' by #{data.pull_request.user.login}: #{data.pull_request.html_url}"
+  state['opened'] = "New pull request"
+  state['closed'] = "Closed pull request"
+  state['merged'] = "Merged pull request"
+  if data.action of state
+    if data.action == 'closed' and data.merged
+      key = 'merged'
+    else
+      key = data.action
+    callback "[#{data.repository.name}] #{state[key]} '#{data.pull_request.title}' by #{data.pull_request.user.login}: #{data.pull_request.html_url}"
 
 getCommits = (robot, url, callback) ->
   robot.http(url).get() (err, res, body) ->
