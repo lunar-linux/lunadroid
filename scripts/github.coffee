@@ -50,11 +50,14 @@ compareTimeEqual = (a, b) ->
   return result == 0
 
 notifyPullRequest = (data, callback) ->
-  state['opened'] = "New pull request"
-  state['closed'] = "Closed pull request"
-  state['merged'] = "Merged pull request"
+  state = {
+    opened: "New pull request"
+    closed: "Closed pull request"
+    merged: "Merged pull request"
+  }
+
   if data.action of state
-    if data.action == 'closed' and data.merged
+    if data.action == 'closed' and data.pull_request.merged
       key = 'merged'
     else
       key = data.action
