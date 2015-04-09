@@ -92,7 +92,7 @@ module.exports = (robot) ->
     rmq.send 'update-moonbase'
     msg.reply msg.random responses
 
-  robot.respond /update your self/i, (msg) ->
+  robot.respond /update yourself/i, (msg) ->
     console.log(process.cwd())
     output = spawn "/usr/bin/git", ['pull', '-q', 'origin', 'master']
     output.stderr.on 'data', (data) ->
