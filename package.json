@@ -11,7 +11,9 @@
     "hubot": "^2.11.4",
     "hubot-irc": "^0.2.7",
     "hubot-redis-brain": "0.0.2",
-    "amqp": "^0.2.4"
+    "amqp": "^0.2.4",
+    "time": "^0.11.2",
+    "cron": "^1.0.9"
   },
   "engines": {
     "node": "0.10.x"

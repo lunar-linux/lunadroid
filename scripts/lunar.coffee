@@ -6,6 +6,8 @@
 #   "querystring":""
 #   "child_process":""
 #   "amqp":""
+#   "cron":""
+#   "time":""
 #
 # Configuration:
 #   HUBOT_PASTE_API_KEY
@@ -58,7 +60,17 @@ class Rmq
       @exchange.publish '', message, {}, (err) ->
         console.log('Published message.')
 
+
+updateLocalMoonbase = ->
+  output = spawn "/sbin/lin", ['moonbase']
+  output.stderr.on 'data', (data) ->
+    console.log(data.toString())
+
+
 module.exports = (robot) ->
+  # Update local moonbase on a regular basis using cron (every hour)
+  cronJob = require('cron').CronJob
+  new cronJob '0 0 * * * *', updateLocalMoonbase, null, true, 'Europe/Stockholm'
   rmq = new Rmq amqp_url
 
   robot.hear /!help($|\s+\w+)/, (msg) ->
