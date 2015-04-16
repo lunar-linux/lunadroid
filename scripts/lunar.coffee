@@ -27,6 +27,7 @@ amqplib = require 'amqp'
 api_key = process.env.HUBOT_PASTE_API_KEY
 channel = process.env.HUBOT_PASTE_CHANNEL
 lvu_pattern = 'what|where|website|sources|maintainer|version'
+lvu_gh_pat = 'DETAILS|DEPENDS|CONFIGURE|CONFLICTS|INSTALL|PRE_BUILD|BUILD|POST_BUILD|POST_INSTALL|PRE_REMOVE|POST_REMOVE'
 amqp_url = process.env.HUBOT_RMQ_URL
 
 responses = [
@@ -96,6 +97,19 @@ module.exports = (robot) ->
         return
     output.stdout.on 'data', (data) ->
       msg.reply data.toString().replace(/\n/g, " ")
+
+  robot.hear new RegExp('^!lvu (' + lvu_gh_pat + ')($|\\s+[-\\w]+)', 'i'), (msg) ->
+    module = msg.match[2].replace /^\s+|\s+$/g, ""
+    output = spawn "/bin/lvu", ["where", module]
+
+    file = msg.match[1]
+
+    output.stderr.on 'data', (data) ->
+      if data.toString().match /Unable to find/i
+        msg.reply "Module #{module} not found."
+        return
+    output.stdout.on 'data', (data) ->
+      msg.reply "https://github.com/lunar-linux/moonbase-" + data.toString().replace(/\//, "/blob/master/") + "/" + module + "/" + file
 
   robot.hear /^!paste$/, (msg) ->
     msg.reply "http://devnull.lunar-linux.org"
