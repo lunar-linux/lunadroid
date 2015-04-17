@@ -109,7 +109,9 @@ module.exports = (robot) ->
         msg.reply "Module #{module} not found."
         return
     output.stdout.on 'data', (data) ->
-      msg.reply "https://github.com/lunar-linux/moonbase-" + data.toString().replace(/\//, "/blob/master/") + "/" + module + "/" + file
+      data = data.toString().replace '\n', ''
+      msg.reply "https://github.com/lunar-linux/moonbase-" +
+        data.replace(/\//, "/blob/master/") + "/" + module + "/" + file
 
   robot.hear /^!paste$/, (msg) ->
     msg.reply "http://devnull.lunar-linux.org"
