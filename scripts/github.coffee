@@ -80,20 +80,12 @@ pullRequestState = (robot, github, data) ->
   repo = data.repository.name
   pr = data.number
 
-  switch data.action
-    # fetch and keep state of commits
-    when 'opened'
-      getCommits robot, data.pull_request.commits_url, (commits) ->
-        for c in commits
-          github.add "#{repo}:#{c}", pr
-    when 'synchronize'
-      getCommits robot, data.pull_request.commits_url, (commits) ->
-        for c in commits
-          github.add "#{repo}:#{c}", pr
-    when 'closed'
-      getCommits robot, data.pull_request.commits_url, (commits) ->
-        for c in commits
-          github.del "#{repo}:#{c}"
+  getCommits robot, data.pull_request.commits_url, (commits) ->
+    for c in commits
+      if data.action == 'opened' or data.action == 'synchronize'
+        github.add "#{repo}:#{c}", pr
+      else if data.action == 'closed'
+        github.del "#{repo}:#{c}"
 
 shortenUrl = (robot, url, callback) ->
   if GOOGL_KEY?
