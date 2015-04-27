@@ -59,12 +59,12 @@ notifyPullRequest = (data, callback) ->
   if data.action of state
     if data.action == 'opened'
       state_msg = state[data.action]
-    else
+    else if data.action == 'closed' and data.pull_request.merged
       state_msg = data.pull_request.merged_by.login
-      if data.action == 'closed' and data.pull_request.merged
-        state_msg += state['merged']
-      else
-        state_msg += state[data.action]
+      state_msg += state['merged']
+    else
+      state_msg = data.sender.login
+      state_msg += state[data.action]
 
     callback "[#{data.repository.name}] #{state_msg} '#{data.pull_request.title}' by #{data.pull_request.user.login}: #{data.pull_request.html_url}"
 
