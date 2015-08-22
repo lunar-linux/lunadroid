@@ -84,8 +84,10 @@ pullRequestState = (robot, github, data) ->
     for c in commits
       if data.action == 'opened' or data.action == 'synchronize'
         github.add "#{repo}:#{c}", pr
+        github.add "#{repo}:#{c}:title", data.pull_request.title
       else if data.action == 'closed'
         github.del "#{repo}:#{c}"
+        github.del "#{repo}:#{c}:title"
 
 shortenUrl = (robot, url, callback) ->
   if GOOGL_KEY?
@@ -108,7 +110,8 @@ notifyCiStatus = (robot, github, data, callback) ->
   target = data.target_url.split "/"
   shortenUrl robot, data.target_url + 'consoleText', (shortTargetUrl) ->
     pr = github.get "#{repo}:#{commit}"
-    msg = "#{repo} build ##{target[6]}:"
+    title = github.get "#{repo}:#{commit}:title"
+    msg = "#{repo} build ##{target[6]} - #{title}:"
 
     if data.state == 'success'
       msg += " SUCCESS: #{shortTargetUrl}"
