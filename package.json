@@ -13,7 +13,8 @@
     "hubot-redis-brain": "0.0.3",
     "amqp": "^0.2.4",
     "time": "^0.11.3",
-    "cron": "^1.0.9"
+    "cron": "^1.0.9",
+    "irc-colors": "^1.2.0"
   },
   "engines": {
     "node": "0.10.x"

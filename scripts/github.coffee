@@ -7,6 +7,7 @@
 
 qs = require 'querystring'
 crypto = require 'crypto'
+c = require 'irc-colors'
 
 events = ['push', 'issues', 'pull_request', 'status']
 SHARED_SECRET = process.env.HUBOT_GITHUB_SHARED_SECRET
@@ -111,12 +112,14 @@ notifyCiStatus = (robot, github, data, callback) ->
   shortenUrl robot, data.target_url + 'consoleText', (shortTargetUrl) ->
     pr = github.get "#{repo}:#{commit}"
     title = github.get "#{repo}:#{commit}:title"
-    msg = "#{repo} build ##{target[6]} - #{title}:"
+    msg = "#{repo} build ##{target[6]}"
 
     if data.state == 'success'
-      msg += " SUCCESS: #{shortTargetUrl}"
+      msg += " [" + c.green 'SUCCESS' + "]"
     else if data.state == 'failure'
-      msg += " FAILED: #{shortTargetUrl}"
+      msg += " [" + c.red 'FAILED' + "]"
+
+    msg += " - #{title} - [ CI: #{shortTargetUrl} ]"
 
     if pr
       shortenUrl robot, "#{url}/pull/#{pr}", (shortGitUrl) ->
