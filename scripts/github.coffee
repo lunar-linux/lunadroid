@@ -115,9 +115,9 @@ notifyCiStatus = (robot, github, data, callback) ->
     msg = "#{repo} build ##{target[6]}"
 
     if data.state == 'success'
-      msg += " [" + ic.green 'SUCCESS' + "]"
+      msg += " [" + ic.green('SUCCESS') + "]"
     else if data.state == 'failure'
-      msg += " [" + ic.red 'FAILED' + "]"
+      msg += " [" + ic.red('FAILED') + "]"
 
     msg += " - #{title} - [ CI: #{shortTargetUrl} ]"
 
