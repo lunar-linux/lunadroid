@@ -7,7 +7,7 @@
 
 qs = require 'querystring'
 crypto = require 'crypto'
-c = require 'irc-colors'
+ic = require 'irc-colors'
 
 events = ['push', 'issues', 'pull_request', 'status']
 SHARED_SECRET = process.env.HUBOT_GITHUB_SHARED_SECRET
@@ -115,9 +115,9 @@ notifyCiStatus = (robot, github, data, callback) ->
     msg = "#{repo} build ##{target[6]}"
 
     if data.state == 'success'
-      msg += " [" + c.green 'SUCCESS' + "]"
+      msg += " [" + ic.green 'SUCCESS' + "]"
     else if data.state == 'failure'
-      msg += " [" + c.red 'FAILED' + "]"
+      msg += " [" + ic.red 'FAILED' + "]"
 
     msg += " - #{title} - [ CI: #{shortTargetUrl} ]"
 
