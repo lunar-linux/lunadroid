@@ -112,14 +112,13 @@ notifyCiStatus = (robot, github, data, callback) ->
   shortenUrl robot, data.target_url + 'consoleText', (shortTargetUrl) ->
     pr = github.get "#{repo}:#{commit}"
     title = github.get "#{repo}:#{commit}:title"
-    msg = "#{repo} build ##{target[6]}"
 
     if data.state == 'success'
-      msg += " [" + ic.green('SUCCESS') + "]"
+      msg = " [" + ic.green('SUCCESS') + "]"
     else if data.state == 'failure'
-      msg += " [" + ic.red('FAILED') + "]"
+      msg = " [" + ic.red('FAILED') + "]"
 
-    msg += " - #{title} - [ CI: #{shortTargetUrl} ]"
+    msg += " #{repo} build ##{target[6]} - #{title} - [ CI: #{shortTargetUrl} ]"
 
     if pr
       shortenUrl robot, "#{url}/pull/#{pr}", (shortGitUrl) ->
