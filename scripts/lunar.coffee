@@ -127,7 +127,7 @@ module.exports = (robot) ->
     msg.reply msg.random responses
 
   robot.on 'rmq:hubot_return', (msg) ->
-    robot.messageRoom msg.reply.reply_to, new Buffer(msg.payload, 'base64').toString('utf8')
+    robot.messageRoom msg.reply.room, new Buffer(msg.payload, 'base64').toString('utf8')
 
   robot.respond /update yourself/i, (msg) ->
     console.log(process.cwd())
