@@ -76,7 +76,7 @@ module.exports = (robot) ->
   # Update local moonbase on a regular basis using cron (every hour)
   cronJob = require('cron').CronJob
   new cronJob '0 0 * * * *', updateLocalMoonbase, null, true, 'Europe/Stockholm'
-  rmq = new Rmq robot
+  rmq = new Rmq(robot)
 
   robot.hear /!help($|\s+\w+)/, (msg) ->
     what = msg.match[1].replace /^\s+|\s+$/g, ""
