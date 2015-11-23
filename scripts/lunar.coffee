@@ -49,7 +49,7 @@ class Rmq
       reconnectBackoffTime: 1000})
 
     @conn.on 'ready', () =>
-      console.log("Connected to " + process.env.HUBOT_RMQ_HOST)
+      console.log("Connected" + amqp_url)
       @conn.exchange 'hubottopic', {type: 'topic', autoDelete: false}, (ex) =>
         console.log("Exchange ready")
         @exchange = ex
