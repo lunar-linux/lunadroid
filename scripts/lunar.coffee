@@ -40,25 +40,29 @@ responses = [
 
 
 class Rmq
-  constructor: (amqpURL) ->
+  constructor: (robot) ->
     @exchange = 0
-    @conn = amqplib.createConnection({url: amqpURL,
-    reconnect: true,
-    reconnectBackoffStrategy: 'linear',
-    reconnectBacoffTime: 1000})
+    @conn = amqplib.createConnection({
+      url: amqp_url,
+      reconnect: true,
+      reconnectBackoffStrategy: 'linear',
+      reconnectBackoffTime: 1000})
 
     @conn.on 'ready', () =>
       console.log("Connected to " + process.env.HUBOT_RMQ_HOST)
-      @conn.exchange 'hubottopic', type: 'topic', (ex) =>
+      @conn.exchange 'hubottopic', {type: 'topic', autoDelete: false}, (ex) =>
         console.log("Exchange ready")
         @exchange = ex
         @conn.queue 'hubot', autoDelete: false, (q) =>
           console.log("Queue ready")
-          q.bind ex, '#'
+          q.bind ex, 'hubot_return'
+          q.subscribe (message, headers, deliveryInfo, messageObject) ->
+            data = JSON.parse message.data.toString('utf8')
+            robot.emit "rmq:#{data.emit_tag}", data
 
-  send: (message) ->
+  send: (routing_key, message) ->
     if @exchange
-      @exchange.publish '', message, {}, (err) ->
+      @exchange.publish routing_key, message, {}, (err) ->
         console.log('Published message.')
 
 
@@ -72,7 +76,7 @@ module.exports = (robot) ->
   # Update local moonbase on a regular basis using cron (every hour)
   cronJob = require('cron').CronJob
   new cronJob '0 0 * * * *', updateLocalMoonbase, null, true, 'Europe/Stockholm'
-  rmq = new Rmq amqp_url
+  rmq = new Rmq robot
 
   robot.hear /!help($|\s+\w+)/, (msg) ->
     what = msg.match[1].replace /^\s+|\s+$/g, ""
@@ -117,8 +121,12 @@ module.exports = (robot) ->
     msg.reply "http://devnull.lunar-linux.org"
 
   robot.respond /.*update.* moonbase.*/i, (msg) ->
-    rmq.send 'update-moonbase'
+    payload = {"cmd": "update-moonbase", "reply": msg.message.user, "emit_tag": "hubot_return"}
+    rmq.send 'lunar', payload
     msg.reply msg.random responses
+
+  robot.on 'rmq:hubot_return', (msg) ->
+    robot.messageRoom msg.reply.reply_to, new Buffer(msg.payload, 'base64').toString('utf8')
 
   robot.respond /update yourself/i, (msg) ->
     console.log(process.cwd())
