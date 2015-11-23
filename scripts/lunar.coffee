@@ -57,6 +57,7 @@ class Rmq
           console.log("Queue ready")
           q.bind ex, 'hubot_return'
           q.subscribe (message, headers, deliveryInfo, messageObject) ->
+            console.log("Msg: " + message)
             data = JSON.parse message.data.toString('utf8')
             robot.emit "rmq:#{data.emit_tag}", data
 
