@@ -86,7 +86,7 @@ module.exports = (robot) ->
     else
       msg.reply "Available commands: !help, !lvu"
 
-  robot.hear new RegExp('^!lvu (' + lvu_pattern + ')($|\\s+[-\\w]+)', 'i'), (msg) ->
+  robot.hear new RegExp('^!lvu (' + lvu_pattern + ')($|\\s+[-\+\\w]+)', 'i'), (msg) ->
     cmd = msg.match[1]
 
     if cmd == 'help'
@@ -103,7 +103,7 @@ module.exports = (robot) ->
     output.stdout.on 'data', (data) ->
       msg.reply data.toString().replace(/\n/g, " ")
 
-  robot.hear new RegExp('^!lvu (' + lvu_gh_pat + ')($|\\s+[-\\w]+)', 'i'), (msg) ->
+  robot.hear new RegExp('^!lvu (' + lvu_gh_pat + ')($|\\s+[-\+\\w]+)', 'i'), (msg) ->
     module = msg.match[2].replace /^\s+|\s+$/g, ""
     output = spawn "/bin/lvu", ["where", module]
 
