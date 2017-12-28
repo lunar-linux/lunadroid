@@ -154,12 +154,12 @@ module.exports = (robot) ->
       console.log("Please set env HUBOT_GITHUB_SHARED_SECRET")
       res.end ""
       return
-    if not req.headers['X-GitHub-Event']?
+    if not req.headers['x-github-event']?
       res.end ""
       return
 
-    event = req.headers['X-GitHub-Event']
-    delivery = req.headers['X-GitHub-Delivery']
+    event = req.headers['x-gitHub-event']
+    delivery = req.headers['x-github-delivery']
 
     if event in events
       data = req.body
