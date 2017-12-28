@@ -141,8 +141,8 @@ module.exports = (robot) ->
   robot.hear /gh get (\w+)/, (msg) ->
     msg.reply github.get msg.match[1]
 
-  robot.hear /gh list/, (msg) ->
-    msg.reply "Available keys: " + github.list().join(", ")
+  #robot.hear /gh list/, (msg) ->
+  #  msg.reply "Available keys: " + github.list().join(", ")
 
   robot.hear /googl ((https?|ftp):\/\/[^\s\/$.?#].[^\s]*)/, (msg) ->
     shortenUrl robot, msg.match[1], (shortUrl) ->
