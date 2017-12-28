@@ -154,18 +154,19 @@ module.exports = (robot) ->
       console.log("Please set env HUBOT_GITHUB_SHARED_SECRET")
       res.end ""
       return
-    if not req.headers['x-github-event']?
+    if not req.headers['X-GitHub-Event']?
       res.end ""
       return
 
-    event = req.headers['x-github-event']
+    event = req.headers['X-GitHub-Event']
+    delivery = req.headers['X-GitHub-Delivery']
 
     if event in events
       data = req.body
       room = req.params.room
       ghSig = req.headers['x-hub-signature']
       hmac = crypto.createHmac 'sha1', SHARED_SECRET
-      sig = 'sha1=' + hmac.update(JSON.stringify req.body).digest('hex')
+      sig = 'sha1=' + hmac.update(new Buffer JSON.stringify(req.body), 'utf-8').digest('hex')
 
       # Validate HMAC before doing anything else using a "somewhat" safe compare method
       # to avoid timing attacks
@@ -182,6 +183,8 @@ module.exports = (robot) ->
                   robot.messageRoom room, msg
         catch error
           robot.messageRoom room, "Crap something went wrong: #{error}"
+      else
+        console.log("Signature missmatch for #{delivery} - expected #{ghSig} but got #{sig}")
     else
       console.log("Unknown event #{event}, ignoring.")
     res.end ""
