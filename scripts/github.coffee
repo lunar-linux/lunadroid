@@ -158,7 +158,7 @@ module.exports = (robot) ->
       res.end ""
       return
 
-    event = req.headers['x-gitHub-event']
+    event = req.headers['x-github-event']
     delivery = req.headers['x-github-delivery']
 
     if event in events
