@@ -5,16 +5,17 @@
   "author": "Stefan Wold <ratler@lunar-linux.org>",
   "description": "It's out of this world!",
   "dependencies": {
+    "amqp": "^0.2.4",
+    "cron": "^1.0.9",
+    "hubot": "^2.15.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-translate": "^0.2.0",
-    "hubot-scripts": "^2.16.2",
-    "hubot": "^2.15.0",
     "hubot-irc": "^0.2.7",
     "hubot-redis-brain": "0.0.3",
-    "amqp": "^0.2.4",
-    "time": "^0.11.3",
-    "cron": "^1.0.9",
-    "irc-colors": "1.2.0"
+    "hubot-reload-scripts": "^0.1.4",
+    "hubot-scripts": "^2.16.2",
+    "irc-colors": "1.2.0",
+    "time": "^0.11.3"
   },
   "engines": {
     "node": "0.10.x"
