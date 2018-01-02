@@ -180,7 +180,7 @@ module.exports = (robot) ->
               notifyPullRequest data, (msg) ->
                 robot.messageRoom room, msg
             when 'status'
-              if data.state == 'success' or data.state == 'failure'
+              if data.state in ['success', 'pending', 'failure']
                 notifyCiStatus robot, github, data, (msg) ->
                   robot.messageRoom room, msg
         catch error
