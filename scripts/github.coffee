@@ -115,6 +115,8 @@ notifyCiStatus = (robot, github, data, callback) ->
 
     if data.state == 'success'
       msg = "[" + ic.green('SUCCESS') + "]"
+    else if data.state == 'pending'
+      msg = "[" + ic.yellow('BUILDING') + "]"
     else if data.state == 'failure'
       msg = "[" + ic.red('FAILED') + "]"
 
