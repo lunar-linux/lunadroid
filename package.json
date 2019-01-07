@@ -6,7 +6,7 @@
   "description": "It's out of this world!",
   "dependencies": {
     "amqp": "^0.2.4",
-    "cron": "^1.0.9",
+    "cron": "1.0.9",
     "hubot": "^2.15.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-translate": "^0.2.0",
