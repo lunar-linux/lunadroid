@@ -11,8 +11,6 @@ ic = require 'irc-colors'
 
 events = ['push', 'issues', 'pull_request', 'status']
 SHARED_SECRET = process.env.HUBOT_GITHUB_SHARED_SECRET
-GOOGL_KEY = process.env.HUBOT_GOOGL_KEY
-
 
 class Github
   constructor: (@robot) ->
@@ -91,17 +89,6 @@ pullRequestState = (robot, github, data) ->
         github.del "#{repo}:#{c}:title"
 
 shortenUrl = (robot, url, callback) ->
-  if GOOGL_KEY?
-    data = JSON.stringify longUrl: url
-    params = {}
-    params.key = GOOGL_KEY
-    robot.http('https://www.googleapis.com/urlshortener/v1/url')
-      .query(params)
-      .header("Content-Type", "application/json")
-      .post(data) (err, res, body) ->
-        callback if err then url else JSON.parse(body).id
-  else
-    console.log("To enable URL shortening set HUBOT_GOOGL_KEY.")
     callback url
 
 notifyCiStatus = (robot, github, data, callback) ->
