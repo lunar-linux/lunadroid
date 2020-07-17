@@ -107,11 +107,14 @@ notifyCiStatus = (robot, github, data, callback) ->
     else if data.state == 'failure'
       msg = "[" + ic.red('FAILED') + "]"
 
-    msg += " #{repo} build ##{target[6]} - #{title} - [ CI: #{shortTargetUrl} ]"
+    msg += " #{repo} build ##{target[6]} - ##{pr}: #{title}"
 
-    if pr
+    if data.state != 'pending'
+      msg += " - [ CI: #{shortTargetUrl} ]"
+
+    if pr and data.state != 'pending'
       shortenUrl robot, "#{url}/pull/#{pr}", (shortGitUrl) ->
-        msg += " [ PR ##{pr}: #{shortGitUrl} ]"
+        msg += " [ PR: #{shortGitUrl} ]"
         callback msg
     else
       callback msg
